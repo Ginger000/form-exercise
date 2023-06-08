@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+    swcLoader: false,
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
