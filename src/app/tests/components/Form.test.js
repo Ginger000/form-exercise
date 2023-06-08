@@ -7,85 +7,103 @@ import mockLocalStorage from '../mocks/localStorage';
 
 Object.defineProperty(window, 'localStorage', { value: mockLocalStorage });
 
-test('loads with initial state', () => {
-    const { getByLabelText } = render(<Form />);
-    expect(getByLabelText(/Name:/i).value).toBe('');
-    expect(getByLabelText(/Email:/i).value).toBe('');
+describe('test userInfo form', () => {
+    let getByText, getByLabelText, findByText, queryByText;
+    beforeEach(() => {
+        const renderResult = render(<Form />);
+        getByText = renderResult.getByText;
+        getByLabelText = renderResult.getByLabelText;
+        findByText = renderResult.findByText;
+        queryByText = renderResult.queryByText;
+    });
+    it('loads with initial state', () => {
+        //const { getByLabelText } = render(<Form />);
+        expect(getByLabelText(/Name:/i).value).toBe('');
+        expect(getByLabelText(/Email:/i).value).toBe('');
+    });
+
+    it('allows entering of name and email', () => {
+        //const { getByLabelText } = render(<Form />);
+        fireEvent.change(getByLabelText(/Name:/i), {
+            target: { value: 'John Doe' },
+        });
+        fireEvent.change(getByLabelText(/Email:/i), {
+            target: { value: 'john.doe@example.com' },
+        });
+
+        expect(getByLabelText(/Name:/i).value).toBe('John Doe');
+        expect(getByLabelText(/Email:/i).value).toBe('john.doe@example.com');
+    });
+
+    //* test validation, belonging to state transition
+    it('validate user data when moving to survey', async () => {
+        //const { getByText, getByLabelText, findByText } = render(<Form />);
+
+        fireEvent.change(getByLabelText(/Name:/i), { target: { value: '' } });
+        fireEvent.change(getByLabelText(/Email:/i), {
+            target: { value: 'invalid' },
+        });
+        fireEvent.click(getByText(/Next/i));
+
+        expect(await findByText(/Name is required/i)).toBeInTheDocument();
+        expect(await findByText(/Email is not valid/i)).toBeInTheDocument();
+    });
 });
 
-test('allows entering of name and email', () => {
-    const { getByLabelText } = render(<Form />);
-    fireEvent.change(getByLabelText(/Name:/i), {
-        target: { value: 'John Doe' },
+describe('test state transtion in the form component', () => {
+    let getByText, getByLabelText, findByText, queryByText;
+    beforeEach(() => {
+        const renderResult = render(<Form />);
+        getByText = renderResult.getByText;
+        getByLabelText = renderResult.getByLabelText;
+        findByText = renderResult.findByText;
+        queryByText = renderResult.queryByText;
     });
-    fireEvent.change(getByLabelText(/Email:/i), {
-        target: { value: 'john.doe@example.com' },
+    it('allows progressing to the survey form', async () => {
+        //const { getByText, getByLabelText, queryByText } = render(<Form />);
+        fireEvent.change(getByLabelText(/Name:/i), {
+            target: { value: 'John Doe' },
+        });
+        fireEvent.change(getByLabelText(/Email:/i), {
+            target: { value: 'john.doe@example.com' },
+        });
+        fireEvent.click(getByText(/Next/i));
+
+        await waitFor(() =>
+            expect(queryByText(/User Information/i)).not.toBeInTheDocument()
+        );
+
+        expect(queryByText(/Survey/i)).toBeInTheDocument();
+        expect(getByLabelText(/Question 1:/i).value).toBe('Bagel');
+        expect(getByLabelText(/Question 2:/i).value).toBe('Water');
     });
 
-    expect(getByLabelText(/Name:/i).value).toBe('John Doe');
-    expect(getByLabelText(/Email:/i).value).toBe('john.doe@example.com');
-});
+    it('transitions to confirmation and submitted state', async () => {
+        //const { getByText, getByLabelText, findByText } = render(<Form />);
 
-//* state transition
-test('allows progressing to the survey form', async () => {
-    const { getByText, getByLabelText, queryByText } = render(<Form />);
-    fireEvent.change(getByLabelText(/Name:/i), {
-        target: { value: 'John Doe' },
+        // Fill out user data
+        fireEvent.change(getByLabelText(/Name:/i), {
+            target: { value: 'John Doe' },
+        });
+        fireEvent.change(getByLabelText(/Email:/i), {
+            target: { value: 'john.doe@example.com' },
+        });
+        fireEvent.click(getByText(/Next/i));
+
+        // Fill out survey data
+        fireEvent.change(getByLabelText(/Question 1:/i), {
+            target: { value: 'Bagel' },
+        });
+        fireEvent.change(getByLabelText(/Question 2:/i), {
+            target: { value: 'Water' },
+        });
+        fireEvent.click(getByText(/Next/i));
+
+        // Confirm data
+        fireEvent.click(getByText(/Submit/i));
+
+        expect(await findByText(/Form Submitted!/i)).toBeInTheDocument();
     });
-    fireEvent.change(getByLabelText(/Email:/i), {
-        target: { value: 'john.doe@example.com' },
-    });
-    fireEvent.click(getByText(/Next/i));
-
-    await waitFor(() =>
-        expect(queryByText(/User Information/i)).not.toBeInTheDocument()
-    );
-
-    expect(queryByText(/Survey/i)).toBeInTheDocument();
-    expect(getByLabelText(/Question 1:/i).value).toBe('Bagel');
-    expect(getByLabelText(/Question 2:/i).value).toBe('Water');
-});
-
-//*state transition
-test('validate user data when moving to survey', async () => {
-    const { getByText, getByLabelText, findByText } = render(<Form />);
-
-    fireEvent.change(getByLabelText(/Name:/i), { target: { value: '' } });
-    fireEvent.change(getByLabelText(/Email:/i), {
-        target: { value: 'invalid' },
-    });
-    fireEvent.click(getByText(/Next/i));
-
-    expect(await findByText(/Name is required/i)).toBeInTheDocument();
-    expect(await findByText(/Email is not valid/i)).toBeInTheDocument();
-});
-
-//*state transition
-test('transitions to confirmation and submitted state', async () => {
-    const { getByText, getByLabelText, findByText } = render(<Form />);
-
-    // Fill out user data
-    fireEvent.change(getByLabelText(/Name:/i), {
-        target: { value: 'John Doe' },
-    });
-    fireEvent.change(getByLabelText(/Email:/i), {
-        target: { value: 'john.doe@example.com' },
-    });
-    fireEvent.click(getByText(/Next/i));
-
-    // Fill out survey data
-    fireEvent.change(getByLabelText(/Question 1:/i), {
-        target: { value: 'Bagel' },
-    });
-    fireEvent.change(getByLabelText(/Question 2:/i), {
-        target: { value: 'Water' },
-    });
-    fireEvent.click(getByText(/Next/i));
-
-    // Confirm data
-    fireEvent.click(getByText(/Submit/i));
-
-    expect(await findByText(/Form Submitted!/i)).toBeInTheDocument();
 });
 
 //*test localStorage
