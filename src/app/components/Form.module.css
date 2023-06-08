@@ -42,6 +42,10 @@
   margin-top: 5px;
 }
 
+.warning {
+  color: rgb(255, 73, 104);
+}
+
 .mySelect{
   width: 200px;
   padding: 10px;

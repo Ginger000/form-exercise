@@ -60,7 +60,7 @@ export function Form() {
             Name:
             <br />
             <input className={styles.myInput} data-testid="name-input" type="text" name="name" value={state.context.userData.name || ''} onChange={handleChange} />
-            {state.context.errors.name && <span>{state.context.errors.name}</span>}
+            {state.context.errors.name && <div className={styles.warning}>{state.context.errors.name}</div>}
           </label>
           </div>
           
@@ -70,7 +70,7 @@ export function Form() {
             Email:
             <br />
             <input className={styles.myInput} data-testid="email-input" name="email" value={state.context.userData.email || ''} onChange={handleChange} />
-            {state.context.errors.email && <span>{state.context.errors.email}</span>}
+            {state.context.errors.email && <div className={styles.warning}>{state.context.errors.email}</div>}
           </label>
           </div>
      

@@ -1,7 +1,7 @@
 describe('Form', () => {
     beforeEach(() => {
         // Visit the page before each test case
-        cy.visit('https://form-exercise-kt6u2mtrp-ginger000.vercel.app/');
+        cy.visit('https://form-exercise-roan.vercel.app/');
     });
 
     it('fills out the form, submits it, and navigates through the form', () => {
