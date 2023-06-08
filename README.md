@@ -1,7 +1,9 @@
 This is a multi-step form app using React and Xstate
 
-## 👉 [Deployment Link](https://form-exercise-roan.vercel.app/)
-
+## 👉 [Deployment Link](https://form-exercise-git-main-ginger000.vercel.app/)
+- back-up links
+  https://form-exercise-git-main-ginger000.vercel.app/
+  https://form-exercise-roan.vercel.app/
 
 ## functionality
 ✅ userInfo, survey, and confirmation  with 
